@@ -1,0 +1,2 @@
+[0629/102320.544:ERROR:settings.cc(320)] Settings magic is not 1129342067
+[1127/152834.286:ERROR:directory_reader_win.cc(43)] FindFirstFile: 지정된 경로를 찾을 수 없습니다. (0x3)

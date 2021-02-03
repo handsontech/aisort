@@ -1,0 +1,182 @@
+#!/usr/bin/env node
+
+/**
+ * Module dependencies.
+ */
+
+var app = require('../app');
+var debug = require('debug')('ev3apps:server');
+var http = require('http');
+
+/**
+ * Get port from environment and store in Express.
+ */
+
+var port = normalizePort(process.env.PORT || '80');
+app.set('port', port);
+
+/**
+ * Create HTTP server.
+ */
+
+var server = http.createServer(app);
+
+
+var state = 0;
+
+var mqtt=require("mqtt");
+// EV3 IP 주소로 변경 한다. 
+
+/*var client= mqtt.connect("mqtt://127.0.0.1");
+
+client.on("connect" , function(){
+	client.subscribe("state");	
+});
+
+
+client.on("message", function(topic, message){
+  state=JSON.parse(message);
+  console.log(state);
+});
+
+*/
+var io=require("socket.io")(server);
+
+
+io.on("connection", function(socket){
+
+  state =0;
+  var client;
+  socket.on("socket_evt_ip", function(data){
+    client =EV3mqtt(data);
+  });
+
+	socket.on("socket_evt_mqtt", function(data){
+    socket.emit("socket_evt_mqtt",state);
+  });
+    
+  socket.on("socket_evt_brick", function(data){ 
+   
+    var obj=JSON.parse(data);
+
+    console.log("-----------");
+    console.log(obj.state);
+
+    var conn = obj.state;
+
+    if(conn =='stop')
+    { 
+        state =0;
+        return;
+    }
+
+    console.log(data);
+
+    if(client != null)
+        client.pub(data);
+  });	
+
+});	
+
+
+
+function EV3mqtt(val)
+{
+  var obj=JSON.parse(val);
+
+  var url = "mqtt://"+obj.ev3ip;
+  
+  console.log(url);
+
+  var client= mqtt.connect(url);
+
+  client.on("connect" , function(){
+    console.log("connected");
+   
+    var jsonInfo = JSON.stringify({ 'state': 'get' });
+    client.subscribe("state");
+    client.publish("ev3", jsonInfo);
+    state =1;	
+  });
+  
+  
+  client.on("message", function(topic, message){
+    state=JSON.parse(message);
+    console.log(state);
+  });  
+
+  return {
+    pub: function(data)
+    {
+      client.publish("ev3", data);
+    }
+  }
+}
+
+/**
+ * Listen on provided port, on all network interfaces.
+ */
+
+server.listen(port);
+server.on('error', onError);
+server.on('listening', onListening);
+
+/**
+ * Normalize a port into a number, string, or false.
+ */
+
+function normalizePort(val) {
+  var port = parseInt(val, 10);
+
+  if (isNaN(port)) {
+    // named pipe
+    return val;
+  }
+
+  if (port >= 0) {
+    // port number
+    return port;
+  }
+
+  return false;
+}
+
+/**
+ * Event listener for HTTP server "error" event.
+ */
+
+function onError(error) {
+  if (error.syscall !== 'listen') {
+    throw error;
+  }
+
+  var bind = typeof port === 'string'
+    ? 'Pipe ' + port
+    : 'Port ' + port;
+
+  // handle specific listen errors with friendly messages
+  switch (error.code) {
+    case 'EACCES':
+      console.error(bind + ' requires elevated privileges');
+      process.exit(1);
+      break;
+    case 'EADDRINUSE':
+      console.error(bind + ' is already in use');
+      process.exit(1);
+      break;
+    default:
+      throw error;
+  }
+}
+
+/**
+ * Event listener for HTTP server "listening" event.
+ */
+
+function onListening() {
+  var addr = server.address();
+  var bind = typeof addr === 'string'
+    ? 'pipe ' + addr
+    : 'port ' + addr.port;
+  debug('Listening on ' + bind);
+}
