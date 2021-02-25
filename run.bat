@@ -1,8 +1,6 @@
 ECHO ON
 cd aiweb
 
-TASKKILL /IM chrome.exe
-
 start  npm start
 
 timeout /t 3

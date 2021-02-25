@@ -22,17 +22,18 @@
         $(document).ready(function () {
 
             data={}
+            $("#mic-container").html("<br><img src=\'\/images\/mic_off.png\' width=\'200\' height=\'150\'>");
 
             socket = io.connect(); // 3000port
             // Node.js보낸 데이터를 수신하는 부분
             socket.on("socket_evt_mqtt", function (data) {
                 state = JSON.parse(data);
                 if (state == 1)
-                    $("#state-container").html("<br><img src=\'\/images\/ing.png\' width=\'200\' height=\'150\'>");
+                    $("#state-container").html("<img src=\'\/images\/ing.png\' >");
                 else if (state == 2)
-                    $("#state-container").html("<br><img src=\'\/images\/conn.png\' width=\'200\' height=\'150\'>");
+                    $("#state-container").html("<img src=\'\/images\/conn.png\' >");
                 else
-                    $("#state-container").html("<br><img src=\'\/images\/discon.png\' width=\'200\' height=\'150\'>");
+                    $("#state-container").html("<img src=\'\/images\/discon.png\' >");
             });
             if (timer == null) {
                 timer = window.setInterval("timer1()", 500);
@@ -67,66 +68,67 @@
     </script>
 </head>
 
-<body style='background-color: #e0f2f1 ;'>
+<body >
     <!--JavaScript at end of body for optimized loading-->
-    <div class="card-panel teal white-text lighten-2">
-        <h5>인공 지능 판별기: 음성</h5>
+    <div class="card-panel blue white-text darken-2">
+        <h5> <div class="row"><div class="col s5" style="font-size:35px;vertical-align:text-bottom">인공 지능 판별기 (음성) </div>
+            <div class="col s7" > 
+                <img src="/images/img.png" height="50px" onclick="window.location.href='./MQTT.html'">
+                <img  src="/images/voice.png"  height="50px" onclick="window.location.href='./audio.html'">
+                <img  src="/images/pose.png"  height="50px" onclick="window.location.href='./pose.html'">
+            </div></div> </h5> 
     </div>
 
     <div class="container" >
         <div class="row">
             <div class="col s12">
                 <div class="row">
-                    <div class="input-field col s3">
-                        <input type="text" id="ev3ip" value="ev3dev">
-                        <label for="ev3ip">EV3 IP 주소</label>
-                    </div>
-                    <div class="input-field col s4">
-                        <button class="waves-effect waves-light btn" onclick="init()"><i
-                                class="material-icons left">play_circle_filled</i>시작</button>
-                        <button class="waves-effect waves-light btn" onclick="wstop()"><i
-                                class="material-icons left">cancel</i>중지</button>
+                    <div class="input-field col s2">
+                        <input type="text" id="ev3ip"" value="ev3dev">
+                        <label for="ev3ip">ev3 주소</label>
                     </div>
                     <div class="input-field col s5">
-                        <button class="waves-effect waves-light btn" onclick="window.location.href='./MQTT.html'"><i
-                            class="material-icons left">preview</i>이미지</button>
-                        <button class="waves-effect waves-light btn" onclick="window.location.href='./pose.html'"><i
-                                class="material-icons left">accessibility</i>포즈</button>
-                        <button class="waves-effect waves-light btn" onclick="window.location.href='./audio.html'" ><i
-                                    class="material-icons left">mic</i>음성</button>    
+                        <input type="text" id="model_url"">
+                        <label for="model_url">학습모델파일주소</label>
+                    </div>
+                    <div class="input-field col s5">
+                        <button class="blue darken-1 waves-effect waves-light btn" onclick="init()"><i
+                                class="material-icons left">play_circle_filled</i>시작</button>
+                        <button class="blue darken-1 waves-effect waves-light btn" onclick="wstop()"><i
+                                class="material-icons left">cancel</i>중지</button>
                     </div>
                 </div>
             </div>
         </div>
 
         <div class="row">
-            <div class="col s4">
+            <div class ="col" style="max-width:250px;min-width:250px">
                 <div class="card">
-                    <div class="card-content" style="font-size:20px">
-                        <b>EV3 상태</b>
+                    <div class="card-content" style="font-size:25px;color:#499ff8;text-align: center">
+                        <b>EV3 연결 상태</b>
                     </div>
                     <div class="divider"></div>
-                    <div class="card-image" id="state-container" style="height:200px">
+                    <div class="card-image" id="state-container" style="height:200px;width:200px;padding:20px">
                     </div>
                 </div>
             </div>
-            <div class="col s4">
+            <div class ="col" style="max-width:250px;min-width:250px">
                 <div class="card">
-                    <div class="card-content" style="font-size:20px">
+                    <div class="card-content" style="font-size:25px;color:#499ff8;text-align: center">
                         <b>마이크</b>
                     </div>
                     <div class="divider"></div>
-                    <div class="card-image" id="mic-container" style="height:200px;padding-left:10px">
+                    <div class="card-image" id="mic-container" style="height:200px;width:200px;padding-left:20px;">f
                     </div>
                 </div>
             </div>
-            <div class="col s4">
+            <div class ="col" style="max-width:250px;min-width:250px">
                 <div class="card">
-                    <div class="card-content" style="font-size:20px">
+                    <div class="card-content" style="font-size:25px;color:#499ff8;text-align: center">
                         <b>판 정</b>
                     </div>
                     <div class="divider"></div>
-                    <div class="card-image" style="height:200px;padding-left:10px" >
+                    <div class="card-image" style="height:200px;width:200px;padding:20px">
                         <br>
                         <div id="label-container"></div>
                         <div id="brick"></div>
@@ -136,18 +138,26 @@
         </div>
 
     </div>
-
+    <div><img style="vertical-align:text-bottom" src="/images/copyright.png">
+    </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
     <script type="text/javascript">
       // more documentation available at
     // https://github.com/tensorflow/tfjs-models/tree/master/speech-commands
 
     // the link to your model provided by Teachable Machine export panel
-    const URL = "https://teachablemachine.withgoogle.com/models/kgmLimmw_/";
+    //const URL = "https://teachablemachine.withgoogle.com/models/kgmLimmw_/";
    
     async function createModel() {
-       const checkpointURL = URL + "model.json"; // model topology
-       const metadataURL = URL + "metadata.json"; // model metadata
+    //    const checkpointURL = URL + "model.json"; // model topology
+    //    const metadataURL = URL + "metadata.json"; // model metadata
+       var URL = document.getElementById("model_url").value;
+
+        if (URL == null || URL.length ==0)
+            return 
+
+        var checkpointURL = URL + "model.json";
+        var metadataURL = URL + "metadata.json";
 
        const recognizer = speechCommands.create(
            "BROWSER_FFT", // fourier transform type, not useful to change
@@ -173,6 +183,9 @@
     let recognizer;
    
     async function init() {
+
+
+
        const recognizer = await createModel();
        const classLabels = recognizer.wordLabels(); // get class labels
        const labelContainer = document.getElementById("label-container");
@@ -183,8 +196,8 @@
        wstop();
        setEV3IP();
        
-       $("#mic-container").html("<br><img src=\'\/images\/mic.png\' width=\'200\' height=\'150\'>");
-
+       $("#mic-container").html("<br><img src=\'\/images\/mic_on.png\' width=\'200\' height=\'150\'>");
+       
 
        // listen() takes two arguments:
        // 1. A callback function that is invoked anytime a word is recognized.
@@ -218,6 +231,7 @@
             if(recognizer)
                 await recognizer.stopListening();
             //document.getElementById("webcam-container").removeChild(webcam.canvas);
+            $("#mic-container").html("<br><img src=\'\/images\/mic_off.png\' width=\'200\' height=\'150\'>");
        
     }
 
